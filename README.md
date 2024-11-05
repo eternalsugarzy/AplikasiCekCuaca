@@ -8,6 +8,7 @@ Aplikasi Pengelolaan Cuaca ini memungkinkan pengguna untuk mencari dan menampilk
 
 - Deskripsi cuaca (cerah, berawan, hujan, dll.) dalam Bahasa Indonesia.
 - Suhu kota dalam derajat Celcius.
+
 Aplikasi ini juga menyimpan data cuaca yang telah dicari dan menampilkannya dalam tabel. Selain itu, kota yang sering dicari otomatis ditambahkan ke daftar favorit untuk akses cepat.
 
 Aplikasi menggunakan OpenWeatherMap API untuk mendapatkan data cuaca secara real-time dan menampilkan ikon cuaca yang sesuai berdasarkan kondisi cuaca.
