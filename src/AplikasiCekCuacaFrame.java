@@ -118,6 +118,47 @@ public class AplikasiCekCuacaFrame extends javax.swing.JFrame {
             return description; // Kembalikan deskripsi asli jika tidak cocok
     }
 }
+     
+     private void setWeatherIcon(String kondisiCuaca) {
+    String iconPath = "";
+    
+    switch (kondisiCuaca.toLowerCase()) {
+        case "cerah":
+        case "langit cerah":
+            iconPath = "/icons/cerah.png";
+            break;
+        case "berawan sebagian":
+        case "awan tersebar":
+        case "awan terputus":
+        case "sedikit berawan":
+        case "awan mendung":
+        case "awan pecah":
+            iconPath = "/icons/cloudy.png";
+            break;
+        case "hujan":
+        case "hujan rintik-rintik":
+            iconPath = "/icons/rain.png";
+            break;
+        case "badai petir":
+            iconPath = "/icons/thunderstorm.png";
+            break;
+        case "kabut":
+        case "kabut asap":
+            iconPath = "/icons/mist.png";
+            break;
+        default:
+            iconPath = "/icons/default.png"; // Ikon default jika kondisi tidak dikenali
+    }
+    
+    // Set ikon cuaca ke iconLabel jika file gambar ditemukan
+    java.net.URL imgURL = getClass().getResource(iconPath);
+    if (imgURL != null) {
+        iconLabel.setIcon(new javax.swing.ImageIcon(imgURL));
+    } else {
+        System.err.println("Gambar ikon cuaca tidak ditemukan: " + iconPath);
+    }
+}
+     
 
 
     /**
@@ -138,6 +179,7 @@ public class AplikasiCekCuacaFrame extends javax.swing.JFrame {
         simpanButton = new javax.swing.JButton();
         jScrollPane1 = new javax.swing.JScrollPane();
         dataTable = new javax.swing.JTable();
+        iconLabel = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -185,6 +227,9 @@ public class AplikasiCekCuacaFrame extends javax.swing.JFrame {
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 525, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 105, Short.MAX_VALUE))
+            .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel1Layout.createSequentialGroup()
@@ -193,13 +238,13 @@ public class AplikasiCekCuacaFrame extends javax.swing.JFrame {
                         .addComponent(kotaTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 131, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(52, 52, 52)
                         .addComponent(lokasiComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, 129, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 525, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addComponent(cekCuacaButton)
                         .addGap(91, 91, 91)
                         .addComponent(simpanButton, javax.swing.GroupLayout.PREFERRED_SIZE, 119, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(cuacaLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 269, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(291, 291, 291))
+                    .addComponent(cuacaLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 269, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(iconLabel))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -215,9 +260,10 @@ public class AplikasiCekCuacaFrame extends javax.swing.JFrame {
                     .addComponent(simpanButton))
                 .addGap(30, 30, 30)
                 .addComponent(cuacaLabel)
-                .addGap(27, 27, 27)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 239, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap())
+                .addGap(54, 54, 54)
+                .addComponent(iconLabel)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 78, Short.MAX_VALUE)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 239, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -225,8 +271,8 @@ public class AplikasiCekCuacaFrame extends javax.swing.JFrame {
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, 567, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 14, Short.MAX_VALUE))
+                .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -252,10 +298,16 @@ public class AplikasiCekCuacaFrame extends javax.swing.JFrame {
         
         // Parsing data dari JSON
         String kondisiCuaca = jsonResponse.getJSONArray("weather").getJSONObject(0).getString("description");
+        kondisiCuaca = translateWeatherDescription(kondisiCuaca); // Terjemahkan jika perlu
         double suhu = jsonResponse.getJSONObject("main").getDouble("temp");
         
         // Menampilkan hasil dalam Bahasa Indonesia
         cuacaLabel.setText("Cuaca: " + kondisiCuaca + ", Suhu: " + suhu + "°C");
+        
+        // Atur ikon cuaca
+        setWeatherIcon(kondisiCuaca);
+        
+        // Tambahkan kota ke favorit jika sudah dicek beberapa kali
         addCityToFavoritesIfFrequent(kota);
         
     } catch (Exception e) {
@@ -353,6 +405,7 @@ public class AplikasiCekCuacaFrame extends javax.swing.JFrame {
     private javax.swing.JButton cekCuacaButton;
     private javax.swing.JLabel cuacaLabel;
     private javax.swing.JTable dataTable;
+    private javax.swing.JLabel iconLabel;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane1;
