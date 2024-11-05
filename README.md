@@ -480,5 +480,7 @@ Muhammad Irwan Firmanto
 
 ## Screenshots
 
+![Screenshot 2024-11-05 230615](https://github.com/user-attachments/assets/0f1a0d63-dd2e-4021-a409-4373dcfe1b1e)
+![Screenshot 2024-11-05 230554](https://github.com/user-attachments/assets/424ae6dc-537f-4884-ae8b-7c1a91fd87d9)
 
 
